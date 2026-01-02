@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lanches Naturais - Saud√°vel e Delicioso</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <h1>Ìµó Lanches Naturais</h1>
+            <p class="tagline">Sabor e sa√∫de na medida certa</p>
+        </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="container">
+            <h2>Lanches frescos feitos com carinho Ì≤ö</h2>
+            <p>Ingredientes selecionados, preparados na hora, direto da minha casa para voc√™!</p>
+            <a href="#cardapio" class="btn-primary">Ver Card√°pio</a>
+        </div>
+    </section>
+
+    <!-- Card√°pio -->
+    <section id="cardapio" class="cardapio">
+        <div class="container">
+            <h2>Nosso Card√°pio</h2>
+            <div class="produtos-grid" id="produtos-grid">
+                <!-- Produtos ser√£o carregados aqui pelo JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Carrinho Flutuante -->
+    <div id="carrinho-flutuante" class="carrinho-flutuante" onclick="toggleCarrinho()">
+        <span class="carrinho-icon">Ìªí</span>
+        <span class="carrinho-count" id="carrinho-count">0</span>
+    </div>
+
+    <!-- Modal do Carrinho -->
+    <div id="modal-carrinho" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="toggleCarrinho()">&times;</span>
+            <h2>Ìªí Seu Pedido</h2>
+            <div id="itens-carrinho" class="itens-carrinho">
+                <p class="carrinho-vazio">Seu carrinho est√° vazio</p>
+            </div>
+            <div class="carrinho-total">
+                <h3>Total: R$ <span id="total-carrinho">0,00</span></h3>
+            </div>
+            <div class="carrinho-acoes">
+                <button class="btn-secondary" onclick="limparCarrinho()">Limpar</button>
+                <button class="btn-primary" onclick="finalizarPedido()">Finalizar pelo WhatsApp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sobre -->
+    <section class="sobre">
+        <div class="container">
+            <h2>Por que escolher nossos lanches?</h2>
+            <div class="beneficios">
+                <div class="beneficio">
+                    <div class="beneficio-icon">Ìº±</div>
+                    <h3>Ingredientes Frescos</h3>
+                    <p>Selecionamos diariamente os melhores ingredientes</p>
+                </div>
+                <div class="beneficio">
+                    <div class="beneficio-icon">Ìø†</div>
+                    <h3>Feito em Casa</h3>
+                    <p>Preparado com carinho e higiene m√°xima</p>
+                </div>
+                <div class="beneficio">
+                    <div class="beneficio-icon">‚ö°</div>
+                    <h3>Entrega R√°pida</h3>
+                    <p>Receba fresquinho no conforto da sua casa</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contato -->
+    <section class="contato">
+        <div class="container">
+            <h2>Fa√ßa seu pedido agora!</h2>
+            <p>Atendimento de Segunda a S√°bado, das 8h √†s 18h</p>
+            <a href="https://wa.me/5511999999999" class="btn-whatsapp" target="_blank">
+                Ì≥± Chamar no WhatsApp
+            </a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <div class="container">
+            <p>&copy; 2026 Lanches Naturais - Todos os direitos reservados</p>
+        </div>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
