@@ -344,9 +344,9 @@ header h1 {
 .combo-itens {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin: 12px 0;
-    padding: 12px;
+    gap: 8px;
+    margin: 16px 0 20px 0;
+    padding: 16px 20px;
     background: linear-gradient(135deg, rgba(79, 70, 229, 0.05), rgba(124, 58, 237, 0.05));
     border-radius: 8px;
     border-left: 3px solid var(--primary);
@@ -356,13 +356,15 @@ header h1 {
     font-size: 0.85rem;
     color: var(--gray);
     font-weight: 500;
+    padding-left: 4px;
 }
 
 .combo-precos {
     display: flex;
     flex-direction: column;
-    gap: 6px;
-    margin-bottom: 16px;
+    gap: 8px;
+    margin-bottom: 20px;
+    padding: 0 4px;
 }
 
 .preco-antigo {
