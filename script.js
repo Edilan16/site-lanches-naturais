@@ -76,15 +76,80 @@ function getProdutos() {
     ];
 }
 
+// Carregar combos do localStorage ou usar combos padrão
+function getCombos() {
+    const combosSalvos = localStorage.getItem('combos');
+    if (combosSalvos) {
+        const combos = JSON.parse(combosSalvos);
+        return combos.filter(c => c.ativo !== false);
+    }
+    
+    // Combos padrão
+    return [
+        {
+            id: 'combo1',
+            nome: 'Combo Família',
+            descricao: '4 Sanduíches + 2 Saladas',
+            produtosInclusos: [
+                { id: 1, quantidade: 2, nome: 'Sanduíche de Frango' },
+                { id: 2, quantidade: 2, nome: 'Sanduíche de Atum' },
+                { id: 4, quantidade: 2, nome: 'Salada Completa' }
+            ],
+            precoNormal: 82.00,
+            precoCombo: 69.90,
+            economia: 12.10,
+            imagem: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop',
+            ativo: true
+        },
+        {
+            id: 'combo2',
+            nome: 'Combo Fitness',
+            descricao: '2 Vegetarianos + 1 Salada',
+            produtosInclusos: [
+                { id: 3, quantidade: 2, nome: 'Sanduíche Vegetariano' },
+                { id: 4, quantidade: 1, nome: 'Salada Completa' }
+            ],
+            precoNormal: 35.00,
+            precoCombo: 29.90,
+            economia: 5.10,
+            imagem: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=300&fit=crop',
+            ativo: true
+        }
+    ];
+}
+
 let carrinho = [];
 
 function carregarProdutos() {
     const container = document.getElementById('produtos-grid');
     container.innerHTML = '';
     
+    // Carregar e exibir combos primeiro
+    const combos = getCombos();
+    combos.forEach(combo => {
+        const comboDiv = document.createElement('div');
+        comboDiv.className = 'produto-card combo-card';
+        comboDiv.innerHTML = `
+            <div class="combo-badge">COMBO</div>
+            <img src="${combo.imagem}" alt="${combo.nome}">
+            <h3>${combo.nome}</h3>
+            <p>${combo.descricao}</p>
+            <div class="combo-itens">
+                ${combo.produtosInclusos.map(p => `<span>${p.quantidade}x ${p.nome}</span>`).join('')}
+            </div>
+            <div class="combo-precos">
+                <span class="preco-antigo">De R$ ${combo.precoNormal.toFixed(2)}</span>
+                <div class="preco">R$ ${combo.precoCombo.toFixed(2)}</div>
+                <span class="economia">Economize R$ ${combo.economia.toFixed(2)}</span>
+            </div>
+            <button class="btn-add" onclick="adicionarComboAoCarrinho('${combo.id}', this)">Adicionar Combo</button>
+        `;
+        container.appendChild(comboDiv);
+    });
+    
     const produtos = getProdutos(); // Carrega produtos do localStorage
     
-    if (produtos.length === 0) {
+    if (produtos.length === 0 && combos.length === 0) {
         container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">Nenhum produto disponível no momento.</p>';
         return;
     }
@@ -103,8 +168,47 @@ function carregarProdutos() {
     });
 }
 
+function adicionarComboAoCarrinho(comboId, button) {
+    const combos = getCombos();
+    const combo = combos.find(c => c.id === comboId);
+    
+    if (!combo) {
+        alert('Combo não encontrado!');
+        return;
+    }
+    
+    // Adiciona o combo como um item especial no carrinho
+    const itemExistente = carrinho.find(item => item.id === comboId);
+    
+    if (itemExistente) {
+        itemExistente.quantidade = (itemExistente.quantidade || 1) + 1;
+    } else {
+        carrinho.push({
+            id: comboId,
+            nome: combo.nome,
+            descricao: combo.descricao,
+            preco: combo.precoCombo,
+            imagem: combo.imagem,
+            quantidade: 1,
+            isCombo: true,
+            produtosInclusos: combo.produtosInclusos
+        });
+    }
+    
+    // Feedback visual
+    button.textContent = '✓ Adicionado!';
+    button.style.background = '#10b981';
+    
+    setTimeout(() => {
+        button.textContent = 'Adicionar Combo';
+        button.style.background = '';
+    }, 1500);
+    
+    atualizarCarrinho();
+}
+
 function adicionarAoCarrinho(id, button) {
-    const produtos = getProdutos(); // Carrega produtos atualizados
+    const produtos = getProdutos();
     const produto = produtos.find(p => p.id === id);
     
     if (!produto) {
@@ -112,7 +216,15 @@ function adicionarAoCarrinho(id, button) {
         return;
     }
     
-    carrinho.push(produto);
+    // Verifica se o produto já está no carrinho
+    const itemExistente = carrinho.find(item => item.id === id && !item.isCombo);
+    
+    if (itemExistente) {
+        itemExistente.quantidade = (itemExistente.quantidade || 1) + 1;
+    } else {
+        carrinho.push({...produto, quantidade: 1});
+    }
+    
     atualizarCarrinho();
     
     // Feedback visual
@@ -135,7 +247,8 @@ function atualizarCarrinho() {
     const valorDescontoElement = document.getElementById('valor-desconto');
     const totalComDescontoElement = document.getElementById('total-com-desconto');
     
-    contador.textContent = carrinho.length;
+    const totalItens = carrinho.reduce((sum, item) => sum + (item.quantidade || 1), 0);
+    contador.textContent = totalItens;
     
     if (carrinho.length === 0) {
         lista.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio</p>';
@@ -144,17 +257,26 @@ function atualizarCarrinho() {
         return;
     }
     
-    lista.innerHTML = carrinho.map((item, index) => `
+    lista.innerHTML = carrinho.map((item, index) => {
+        const quantidade = item.quantidade || 1;
+        const subtotal = item.preco * quantidade;
+        return `
         <div class="item-carrinho">
             <div class="item-info">
                 <h4>${item.nome}</h4>
-                <span>R$ ${item.preco.toFixed(2)}</span>
+                <div class="item-quantidade">
+                    <button onclick="alterarQuantidade(${index}, -1)" class="btn-qtd">-</button>
+                    <span class="qtd-numero">${quantidade}</span>
+                    <button onclick="alterarQuantidade(${index}, 1)" class="btn-qtd">+</button>
+                </div>
+                <span class="item-subtotal">R$ ${subtotal.toFixed(2)}</span>
             </div>
             <button onclick="removerDoCarrinho(${index})" class="btn-remover">✕</button>
         </div>
-    `).join('');
+    `;
+    }).join('');
     
-    const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
+    const total = carrinho.reduce((sum, item) => sum + (item.preco * (item.quantidade || 1)), 0);
     totalElement.textContent = total.toFixed(2);
     
     // Calcular desconto
@@ -174,6 +296,20 @@ function atualizarCarrinho() {
     } else if (descontoDiv) {
         descontoDiv.style.display = 'none';
     }
+}
+
+function alterarQuantidade(index, delta) {
+    if (!carrinho[index]) return;
+    
+    const novaQuantidade = (carrinho[index].quantidade || 1) + delta;
+    
+    if (novaQuantidade <= 0) {
+        carrinho.splice(index, 1);
+    } else {
+        carrinho[index].quantidade = novaQuantidade;
+    }
+    
+    atualizarCarrinho();
 }
 
 function removerDoCarrinho(index) {
@@ -199,33 +335,71 @@ function finalizarPedido() {
         return;
     }
     
-    let mensagem = '���️ *Novo Pedido - Lanches Naturais*\n\n';
+    let mensagem = '\u{1F6CD}\uFE0F *Novo Pedido - Lanches Naturais*\n\n';
+    
     carrinho.forEach(item => {
-        mensagem += `• ${item.nome}\nR$ ${item.preco.toFixed(2)}\n\n`;
+        const quantidade = item.quantidade || 1;
+        const subtotal = item.preco * quantidade;
+        
+        if (item.isCombo) {
+            mensagem += `\u{1F381} *${quantidade}x ${item.nome}* (COMBO)\n`;
+            mensagem += `   Itens inclusos:\n`;
+            item.produtosInclusos.forEach(p => {
+                mensagem += `   - ${p.quantidade}x ${p.nome}\n`;
+            });
+            mensagem += `   R$ ${subtotal.toFixed(2)}\n\n`;
+        } else {
+            mensagem += `• *${quantidade}x ${item.nome}*\n`;
+            mensagem += `   R$ ${subtotal.toFixed(2)}\n\n`;
+        }
     });
     
-    const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
-    mensagem += `\n��� *Total: R$ ${total.toFixed(2)}*`;
+    const subtotalGeral = carrinho.reduce((sum, item) => sum + (item.preco * (item.quantidade || 1)), 0);
+    
+    // Aplicar cupom de desconto se houver
+    let total = subtotalGeral;
+    let descontoAplicado = 0;
+    
+    if (cupomAtual) {
+        const cupons = JSON.parse(localStorage.getItem('cupons') || '{}');
+        const cupom = cupons[cupomAtual];
+        
+        if (cupom && cupom.ativo) {
+            if (cupom.tipo === 'percentual') {
+                descontoAplicado = (subtotalGeral * cupom.valor) / 100;
+            } else {
+                descontoAplicado = cupom.valor;
+            }
+            total = subtotalGeral - descontoAplicado;
+            
+            mensagem += `\u{1F4B0} Subtotal: R$ ${subtotalGeral.toFixed(2)}\n`;
+            mensagem += `\u{1F3AB} Desconto (${cupomAtual}): -R$ ${descontoAplicado.toFixed(2)}\n`;
+        }
+    }
+    
+    mensagem += `\n\u{1F4B5} *Total: R$ ${total.toFixed(2)}*`;
     
     // Verifica frete grátis
     if (total >= 30) {
-        mensagem += '\n��� *FRETE GRÁTIS!*';
+        mensagem += '\n\u{1F69A} *FRETE GRÁTIS!*';
     }
     
     // Adiciona observações se houver
     const observacoes = document.getElementById('observacoes').value.trim();
     if (observacoes) {
-        mensagem += `\n\n��� *Observações:*\n${observacoes}`;
+        mensagem += `\n\n\u{1F4DD} *Observações:*\n${observacoes}`;
     }
     
-    mensagem += '\n\nAguardo confirmação! ���';
+    mensagem += '\n\nAguardo confirmação! \u{1F60A}';
     
     const numeroWhatsApp = '5511998468166';
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
     window.open(url, '_blank');
     
     carrinho = [];
+    cupomAtual = null;
     document.getElementById('observacoes').value = '';
+    document.getElementById('input-cupom').value = '';
     atualizarCarrinho();
     toggleCarrinho();
 }

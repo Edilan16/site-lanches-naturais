@@ -83,6 +83,52 @@ function salvarProdutos(produtos) {
     renderizarProdutos();
 }
 
+// Carregar combos do localStorage
+function carregarCombosAdmin() {
+    const combosSalvos = localStorage.getItem('combos');
+    if (combosSalvos) {
+        return JSON.parse(combosSalvos);
+    }
+    return [
+        {
+            id: 'combo1',
+            nome: 'Combo Família',
+            descricao: '4 Sanduíches + 2 Saladas',
+            produtosInclusos: [
+                { id: 1, quantidade: 2, nome: 'Sanduíche de Frango' },
+                { id: 2, quantidade: 2, nome: 'Sanduíche de Atum' },
+                { id: 4, quantidade: 2, nome: 'Salada Completa' }
+            ],
+            precoNormal: 82.00,
+            precoCombo: 69.90,
+            economia: 12.10,
+            imagem: 'https://images.unsplash.com/photo-1567620905732-2d1ec7ab7445?w=400&h=300&fit=crop',
+            ativo: true
+        },
+        {
+            id: 'combo2',
+            nome: 'Combo Fitness',
+            descricao: '2 Vegetarianos + 1 Salada',
+            produtosInclusos: [
+                { id: 3, quantidade: 2, nome: 'Sanduíche Vegetariano' },
+                { id: 4, quantidade: 1, nome: 'Salada Completa' }
+            ],
+            precoNormal: 35.00,
+            precoCombo: 29.90,
+            economia: 5.10,
+            imagem: 'https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?w=400&h=300&fit=crop',
+            ativo: true
+        }
+    ];
+}
+
+// Salvar combos no localStorage
+function salvarCombos(combos) {
+    localStorage.setItem('combos', JSON.stringify(combos));
+    alert('✅ Combos salvos com sucesso!');
+    renderizarCombos();
+}
+
 // Login
 function fazerLogin() {
     const senha = document.getElementById('senha-admin').value;
@@ -90,6 +136,8 @@ function fazerLogin() {
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('admin-panel').style.display = 'block';
         renderizarProdutos();
+        renderizarCombos();
+        carregarConfiguracoes();
     } else {
         alert('❌ Senha incorreta!');
     }
@@ -131,6 +179,46 @@ function renderizarProdutos() {
                     ${produto.disponivel ? 'Indisponibilizar' : 'Disponibilizar'}
                 </button>
                 <button class="btn btn-danger" onclick="removerProduto(${produto.id})">Remover</button>
+            </div>
+        </div>
+    `).join('');
+}
+
+// Renderizar lista de combos
+function renderizarCombos() {
+    const combos = carregarCombosAdmin();
+    const container = document.getElementById('lista-combos');
+    
+    if (combos.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6b7280;">Nenhum combo cadastrado ainda.</p>';
+        return;
+    }
+    
+    container.innerHTML = combos.map(combo => `
+        <div class="product-card ${combo.ativo ? '' : 'indisponivel'}">
+            <div class="product-header">
+                <h3>🎁 ${combo.nome}</h3>
+                <span class="status-badge ${combo.ativo ? 'disponivel' : 'indisponivel'}">
+                    ${combo.ativo ? '✓ Ativo' : '✕ Inativo'}
+                </span>
+            </div>
+            <p style="color: #6b7280; margin: 10px 0;">${combo.descricao}</p>
+            <p style="font-size: 14px; color: #9ca3af; margin: 10px 0;">
+                ${combo.produtosInclusos.map(p => `${p.quantidade}x ${p.nome}`).join(' + ')}
+            </p>
+            <div style="display: flex; justify-content: space-between; margin: 15px 0;">
+                <div>
+                    <p style="color: #6b7280; text-decoration: line-through; margin: 0;">R$ ${combo.precoNormal.toFixed(2)}</p>
+                    <p style="font-size: 24px; font-weight: 700; color: #667eea; margin: 5px 0 0 0;">R$ ${combo.precoCombo.toFixed(2)}</p>
+                    <p style="color: #10b981; font-size: 12px; font-weight: 600; margin: 5px 0 0 0;">Economiza R$ ${combo.economia.toFixed(2)}</p>
+                </div>
+            </div>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button class="btn ${combo.ativo ? 'btn-warning' : 'btn-success'}" 
+                        onclick="toggleComboAtivo('${combo.id}')">
+                    ${combo.ativo ? 'Desativar' : 'Ativar'}
+                </button>
+                <button class="btn btn-danger" onclick="removerCombo('${combo.id}')">Remover</button>
             </div>
         </div>
     `).join('');
@@ -230,12 +318,20 @@ window.onclick = function(event) {
     }
 }
 
-// Controle de Abas
+// Controle de Abas (atualizado para incluir combos)
 function mostrarAba(aba) {
-    document.getElementById('aba-produtos').style.display = aba === 'produtos' ? 'block' : 'none';
-    document.getElementById('aba-configuracoes').style.display = aba === 'configuracoes' ? 'block' : 'none';
+    document.getElementById('aba-produtos').style.display = 'none';
+    document.getElementById('aba-combos').style.display = 'none';
+    document.getElementById('aba-configuracoes').style.display = 'none';
     
-    if (aba === 'configuracoes') {
+    if (aba === 'produtos') {
+        document.getElementById('aba-produtos').style.display = 'block';
+        renderizarProdutos();
+    } else if (aba === 'combos') {
+        document.getElementById('aba-combos').style.display = 'block';
+        renderizarCombos();
+    } else if (aba === 'configuracoes') {
+        document.getElementById('aba-configuracoes').style.display = 'block';
         carregarConfiguracoes();
     }
 }
@@ -374,3 +470,56 @@ if (!localStorage.getItem('produtos')) {
     localStorage.setItem('produtos', JSON.stringify(carregarProdutosAdmin()));
 }
 
+// Inicializar combos padrão se não existirem
+if (!localStorage.getItem('combos')) {
+    localStorage.setItem('combos', JSON.stringify(carregarCombosAdmin()));
+}
+
+// Adicionar combo
+function adicionarCombo(event) {
+    event.preventDefault();
+    
+    const combos = carregarCombosAdmin();
+    const novoId = 'combo' + (combos.length + 1);
+    
+    const precoNormal = parseFloat(document.getElementById('combo-preco-normal').value);
+    const precoCombo = parseFloat(document.getElementById('combo-preco-combo').value);
+    
+    const novoCombo = {
+        id: novoId,
+        nome: document.getElementById('combo-nome').value,
+        descricao: document.getElementById('combo-descricao').value,
+        produtosInclusos: [],
+        precoNormal: precoNormal,
+        precoCombo: precoCombo,
+        economia: precoNormal - precoCombo,
+        imagem: document.getElementById('combo-imagem').value,
+        ativo: true
+    };
+    
+    combos.push(novoCombo);
+    salvarCombos(combos);
+    
+    // Limpar formulário
+    document.getElementById('form-combo').reset();
+}
+
+// Toggle combo ativo/inativo
+function toggleComboAtivo(comboId) {
+    const combos = carregarCombosAdmin();
+    const combo = combos.find(c => c.id === comboId);
+    
+    if (combo) {
+        combo.ativo = !combo.ativo;
+        salvarCombos(combos);
+    }
+}
+
+// Remover combo
+function removerCombo(comboId) {
+    if (confirm('Tem certeza que deseja remover este combo?')) {
+        let combos = carregarCombosAdmin();
+        combos = combos.filter(c => c.id !== comboId);
+        salvarCombos(combos);
+    }
+}
