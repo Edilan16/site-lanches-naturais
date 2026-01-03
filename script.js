@@ -1,67 +1,93 @@
-const produtos = [
-    {
-        id: 1,
-        nome: 'Sanduíche Natural de Frango',
-        descricao: 'Frango desfiado, alface, tomate e cenoura',
-        preco: 12.00,
-        imagem: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&h=300&fit=crop'
-    },
-    {
-        id: 2,
-        nome: 'Sanduíche Natural de Atum',
-        descricao: 'Atum, alface, tomate e milho',
-        preco: 14.00,
-        imagem: 'https://images.unsplash.com/photo-1553909489-cd47e0907980?w=400&h=300&fit=crop'
-    },
-    {
-        id: 3,
-        nome: 'Sanduíche Vegetariano',
-        descricao: 'Queijo branco, alface, tomate, cenoura e beterraba',
-        preco: 10.00,
-        imagem: 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=400&h=300&fit=crop'
-    },
-    {
-        id: 4,
-        nome: 'Salada Completa',
-        descricao: 'Mix de folhas, tomate, pepino, cenoura e molho',
-        preco: 15.00,
-        imagem: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop'
-    },
-    {
-        id: 5,
-        nome: 'Sanduíche de Peito de Peru',
-        descricao: 'Peito de peru, queijo, alface e tomate',
-        preco: 13.00,
-        imagem: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop'
-    },
-    {
-        id: 6,
-        nome: 'Suco Natural 500ml',
-        descricao: 'Laranja, morango, abacaxi ou limão',
-        preco: 8.00,
-        imagem: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop'
-    },
-    {
-        id: 7,
-        nome: 'Wrap Integral',
-        descricao: 'Frango, queijo, alface e molho especial',
-        preco: 16.00,
-        imagem: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop'
-    },
-    {
-        id: 8,
-        nome: 'Açaí na Tigela',
-        descricao: 'Açaí batido com banana e granola',
-        preco: 18.00,
-        imagem: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop'
+// Carregar produtos do localStorage ou usar produtos padrão
+function getProdutos() {
+    const produtosSalvos = localStorage.getItem('produtos');
+    if (produtosSalvos) {
+        const produtos = JSON.parse(produtosSalvos);
+        // Retornar apenas produtos disponíveis
+        return produtos.filter(p => p.disponivel !== false);
     }
-];
+    
+    // Produtos padrão
+    return [
+        {
+            id: 1,
+            nome: 'Sanduíche Natural de Frango',
+            descricao: 'Frango desfiado, alface, tomate e cenoura',
+            preco: 12.00,
+            imagem: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&h=300&fit=crop',
+            disponivel: true
+        },
+        {
+            id: 2,
+            nome: 'Sanduíche Natural de Atum',
+            descricao: 'Atum, alface, tomate e milho',
+            preco: 14.00,
+            imagem: 'https://images.unsplash.com/photo-1553909489-cd47e0907980?w=400&h=300&fit=crop',
+            disponivel: true
+        },
+        {
+            id: 3,
+            nome: 'Sanduíche Vegetariano',
+            descricao: 'Queijo branco, alface, tomate, cenoura e beterraba',
+            preco: 10.00,
+            imagem: 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=400&h=300&fit=crop',
+            disponivel: true
+        },
+        {
+            id: 4,
+            nome: 'Salada Completa',
+            descricao: 'Mix de folhas, tomate, pepino, cenoura e molho',
+            preco: 15.00,
+            imagem: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop',
+            disponivel: true
+        },
+        {
+            id: 5,
+            nome: 'Sanduíche de Peito de Peru',
+            descricao: 'Peito de peru, queijo, alface e tomate',
+            preco: 13.00,
+            imagem: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop',
+            disponivel: true
+        },
+        {
+            id: 6,
+            nome: 'Suco Natural 500ml',
+            descricao: 'Laranja, morango, abacaxi ou limão',
+            preco: 8.00,
+            imagem: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop',
+            disponivel: true
+        },
+        {
+            id: 7,
+            nome: 'Wrap Integral',
+            descricao: 'Frango, queijo, alface e molho especial',
+            preco: 16.00,
+            imagem: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop',
+            disponivel: true
+        },
+        {
+            id: 8,
+            nome: 'Açaí na Tigela',
+            descricao: 'Açaí batido com banana e granola',
+            preco: 18.00,
+            imagem: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop',
+            disponivel: true
+        }
+    ];
+}
 
 let carrinho = [];
 
 function carregarProdutos() {
     const container = document.getElementById('produtos-container');
     container.innerHTML = '';
+    
+    const produtos = getProdutos(); // Carrega produtos do localStorage
+    
+    if (produtos.length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #666; grid-column: 1/-1;">Nenhum produto disponível no momento.</p>';
+        return;
+    }
     
     produtos.forEach(produto => {
         const produtoDiv = document.createElement('div');
@@ -78,7 +104,14 @@ function carregarProdutos() {
 }
 
 function adicionarAoCarrinho(id, button) {
+    const produtos = getProdutos(); // Carrega produtos atualizados
     const produto = produtos.find(p => p.id === id);
+    
+    if (!produto) {
+        alert('Produto não encontrado!');
+        return;
+    }
+    
     carrinho.push(produto);
     atualizarCarrinho();
     
@@ -146,26 +179,26 @@ function finalizarPedido() {
         return;
     }
     
-    let mensagem = '���️ *Novo Pedido - Lanches Naturais*\n\n';
+    let mensagem = '���️ *Novo Pedido - Lanches Naturais*\n\n';
     carrinho.forEach(item => {
         mensagem += `• ${item.nome}\nR$ ${item.preco.toFixed(2)}\n\n`;
     });
     
     const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
-    mensagem += `\n��� *Total: R$ ${total.toFixed(2)}*`;
+    mensagem += `\n��� *Total: R$ ${total.toFixed(2)}*`;
     
     // Verifica frete grátis
     if (total >= 30) {
-        mensagem += '\n��� *FRETE GRÁTIS!*';
+        mensagem += '\n��� *FRETE GRÁTIS!*';
     }
     
     // Adiciona observações se houver
     const observacoes = document.getElementById('observacoes').value.trim();
     if (observacoes) {
-        mensagem += `\n\n��� *Observações:*\n${observacoes}`;
+        mensagem += `\n\n��� *Observações:*\n${observacoes}`;
     }
     
-    mensagem += '\n\nAguardo confirmação! ���';
+    mensagem += '\n\nAguardo confirmação! ���';
     
     const numeroWhatsApp = '5511998468166';
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
