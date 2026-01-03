@@ -399,10 +399,29 @@ header h1 {
     padding: 40px;
     width: 90%;
     max-width: 600px;
+    max-height: 90vh;
     border-radius: 24px;
     position: relative;
     box-shadow: var(--shadow-xl);
     animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+}
+
+.modal-content::-webkit-scrollbar {
+    width: 10px;
+}
+
+.modal-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+}
+
+.modal-content::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+.modal-content::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
 }
 
 @keyframes slideUp {
@@ -445,9 +464,28 @@ header h1 {
 }
 
 .itens-carrinho {
-    max-height: 400px;
+    max-height: 250px;
     overflow-y: auto;
     margin: 24px 0;
+    padding-right: 10px;
+}
+
+.itens-carrinho::-webkit-scrollbar {
+    width: 8px;
+}
+
+.itens-carrinho::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.itens-carrinho::-webkit-scrollbar-thumb {
+    background: var(--primary);
+    border-radius: 10px;
+}
+
+.itens-carrinho::-webkit-scrollbar-thumb:hover {
+    background: var(--secondary);
 }
 
 .item-carrinho {
@@ -870,9 +908,15 @@ footer {
     }
 
     .modal-content {
-        margin: 10% auto;
+        margin: 2% auto;
         padding: 24px;
-        padding-bottom: 120px;
+        padding-bottom: 140px;
+        max-height: 95vh;
+        width: 95%;
+    }
+    
+    .itens-carrinho {
+        max-height: 200px;
     }
 
     .carrinho-acoes {
