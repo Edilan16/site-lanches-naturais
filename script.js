@@ -216,6 +216,11 @@ window.onclick = function(event) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
+    // Inicializar produtos padrão se não existirem no localStorage
+    if (!localStorage.getItem('produtos')) {
+        localStorage.setItem('produtos', JSON.stringify(getProdutos()));
+    }
+    
     carregarProdutos();
     atualizarCarrinho();
 });
