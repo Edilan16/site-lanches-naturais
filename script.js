@@ -79,7 +79,7 @@ function getProdutos() {
 let carrinho = [];
 
 function carregarProdutos() {
-    const container = document.getElementById('produtos-container');
+    const container = document.getElementById('produtos-grid');
     container.innerHTML = '';
     
     const produtos = getProdutos(); // Carrega produtos do localStorage
