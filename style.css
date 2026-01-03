@@ -610,10 +610,20 @@ footer {
     .modal-content {
         margin: 10% auto;
         padding: 24px;
+        padding-bottom: 120px;
     }
 
     .carrinho-acoes {
         flex-direction: column;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: var(--white);
+        padding: 16px 24px;
+        margin: 0;
+        box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+        z-index: 1001;
     }
 
     .carrinho-flutuante {
