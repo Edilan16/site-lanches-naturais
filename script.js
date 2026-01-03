@@ -1,77 +1,131 @@
 const produtos = [
-    {id: 1, nome: "Sanduíche Natural de Frango", descricao: "Peito de frango desfiado, alface, tomate, cenoura ralada e maionese caseira", preco: 12.00, imagem: "https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&h=300&fit=crop"},
-    {id: 2, nome: "Sanduíche Natural de Atum", descricao: "Atum, milho, alface, tomate e cream cheese", preco: 13.50, imagem: "https://images.unsplash.com/photo-1553909489-cd47e0907980?w=400&h=300&fit=crop"},
-    {id: 3, nome: "Sanduíche Vegetariano", descricao: "Queijo branco, alface, tomate, cenoura, beterraba e cream cheese", preco: 11.00, imagem: "https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop"},
-    {id: 4, nome: "Wrap de Frango", descricao: "Frango grelhado, alface, tomate e molho especial em tortilha integral", preco: 14.00, imagem: "https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop"},
-    {id: 5, nome: "Salada Caesar", descricao: "Alface romana, frango grelhado, croutons, parmesão e molho caesar", preco: 15.00, imagem: "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=400&h=300&fit=crop"},
-    {id: 6, nome: "Suco Verde Detox", descricao: "Couve, limão, gengibre, maçã e hortelã (300ml)", preco: 8.00, imagem: "https://images.unsplash.com/photo-1610970881699-44a5587cabec?w=400&h=300&fit=crop"},
-    {id: 7, nome: "Suco de Laranja Natural", descricao: "Suco 100% natural sem açúcar (300ml)", preco: 7.00, imagem: "https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop"},
-    {id: 8, nome: "Bowl de Açaí", descricao: "Açaí com granola, banana e mel", preco: 16.00, imagem: "https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop"}
+    {
+        id: 1,
+        nome: 'Sanduíche Natural de Frango',
+        descricao: 'Frango desfiado, alface, tomate e cenoura',
+        preco: 12.00,
+        imagem: 'https://images.unsplash.com/photo-1509722747041-616f39b57569?w=400&h=300&fit=crop'
+    },
+    {
+        id: 2,
+        nome: 'Sanduíche Natural de Atum',
+        descricao: 'Atum, alface, tomate e milho',
+        preco: 14.00,
+        imagem: 'https://images.unsplash.com/photo-1553909489-cd47e0907980?w=400&h=300&fit=crop'
+    },
+    {
+        id: 3,
+        nome: 'Sanduíche Vegetariano',
+        descricao: 'Queijo branco, alface, tomate, cenoura e beterraba',
+        preco: 10.00,
+        imagem: 'https://images.unsplash.com/photo-1623428187969-5da2dcea5ebf?w=400&h=300&fit=crop'
+    },
+    {
+        id: 4,
+        nome: 'Salada Completa',
+        descricao: 'Mix de folhas, tomate, pepino, cenoura e molho',
+        preco: 15.00,
+        imagem: 'https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop'
+    },
+    {
+        id: 5,
+        nome: 'Sanduíche de Peito de Peru',
+        descricao: 'Peito de peru, queijo, alface e tomate',
+        preco: 13.00,
+        imagem: 'https://images.unsplash.com/photo-1528735602780-2552fd46c7af?w=400&h=300&fit=crop'
+    },
+    {
+        id: 6,
+        nome: 'Suco Natural 500ml',
+        descricao: 'Laranja, morango, abacaxi ou limão',
+        preco: 8.00,
+        imagem: 'https://images.unsplash.com/photo-1600271886742-f049cd451bba?w=400&h=300&fit=crop'
+    },
+    {
+        id: 7,
+        nome: 'Wrap Integral',
+        descricao: 'Frango, queijo, alface e molho especial',
+        preco: 16.00,
+        imagem: 'https://images.unsplash.com/photo-1626700051175-6818013e1d4f?w=400&h=300&fit=crop'
+    },
+    {
+        id: 8,
+        nome: 'Açaí na Tigela',
+        descricao: 'Açaí batido com banana e granola',
+        preco: 18.00,
+        imagem: 'https://images.unsplash.com/photo-1590301157890-4810ed352733?w=400&h=300&fit=crop'
+    }
 ];
 
 let carrinho = [];
 
 function carregarProdutos() {
-    const grid = document.getElementById('produtos-grid');
+    const container = document.getElementById('produtos-container');
+    container.innerHTML = '';
+    
     produtos.forEach(produto => {
-        const card = `
-            <div class="produto-card">
-                <div class="produto-imagem">
-                    <img src="${produto.imagem}" alt="${produto.nome}" loading="lazy">
-                </div>
-                <div class="produto-info">
-                    <h3 class="produto-nome">${produto.nome}</h3>
-                    <p class="produto-descricao">${produto.descricao}</p>
-                    <div class="produto-footer">
-                        <span class="produto-preco">R$ ${produto.preco.toFixed(2)}</span>
-                        <button class="btn-add" onclick="adicionarAoCarrinho(${produto.id})">Adicionar</button>
-                    </div>
-                </div>
-            </div>
+        const produtoDiv = document.createElement('div');
+        produtoDiv.className = 'produto-card';
+        produtoDiv.innerHTML = `
+            <img src="${produto.imagem}" alt="${produto.nome}">
+            <h3>${produto.nome}</h3>
+            <p>${produto.descricao}</p>
+            <div class="preco">R$ ${produto.preco.toFixed(2)}</div>
+            <button class="btn-add" id="btn-${produto.id}" onclick="adicionarAoCarrinho(${produto.id}, this)">Adicionar ao Carrinho</button>
         `;
-        grid.innerHTML += card;
+        container.appendChild(produtoDiv);
     });
 }
 
-function adicionarAoCarrinho(id) {
+function adicionarAoCarrinho(id, button) {
     const produto = produtos.find(p => p.id === id);
     carrinho.push(produto);
     atualizarCarrinho();
+    
+    // Feedback visual
+    if (button) {
+        button.classList.add('added');
+        const textoOriginal = button.textContent;
+        button.textContent = '✓ Adicionado!';
+        setTimeout(() => {
+            button.classList.remove('added');
+            button.textContent = textoOriginal;
+        }, 1000);
+    }
+}
+
+function atualizarCarrinho() {
+    const lista = document.getElementById('carrinho-lista');
+    const contador = document.getElementById('carrinho-count');
+    const totalElement = document.getElementById('carrinho-total');
+    
+    contador.textContent = carrinho.length;
+    lista.innerHTML = '';
+    
+    if (carrinho.length === 0) {
+        lista.innerHTML = '<p style="text-align: center; color: #666;">Seu carrinho está vazio</p>';
+        totalElement.textContent = '0.00';
+        return;
+    }
+    
+    carrinho.forEach((item, index) => {
+        const itemDiv = document.createElement('div');
+        itemDiv.className = 'carrinho-item';
+        itemDiv.innerHTML = `
+            <span>${item.nome}</span>
+            <span>R$ ${item.preco.toFixed(2)}</span>
+            <button onclick="removerDoCarrinho(${index})" class="btn-remover">✕</button>
+        `;
+        lista.appendChild(itemDiv);
+    });
+    
+    const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
+    totalElement.textContent = total.toFixed(2);
 }
 
 function removerDoCarrinho(index) {
     carrinho.splice(index, 1);
     atualizarCarrinho();
-}
-
-function atualizarCarrinho() {
-    document.getElementById('carrinho-count').textContent = carrinho.length;
-    const itensDiv = document.getElementById('itens-carrinho');
-    
-    if (carrinho.length === 0) {
-        itensDiv.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio</p>';
-        document.getElementById('total-carrinho').textContent = '0,00';
-        return;
-    }
-    
-    let itensHTML = '';
-    let total = 0;
-    
-    carrinho.forEach((item, index) => {
-        total += item.preco;
-        itensHTML += `
-            <div class="item-carrinho">
-                <div class="item-info">
-                    <h4>${item.nome}</h4>
-                    <span>R$ ${item.preco.toFixed(2)}</span>
-                </div>
-                <button class="btn-remover" onclick="removerDoCarrinho(${index})">Remover</button>
-            </div>
-        `;
-    });
-    
-    itensDiv.innerHTML = itensHTML;
-    document.getElementById('total-carrinho').textContent = total.toFixed(2).replace('.', ',');
 }
 
 function toggleCarrinho() {
@@ -92,19 +146,33 @@ function finalizarPedido() {
         return;
     }
     
-    let mensagem = '���️ *Novo Pedido - Lanches Naturais*\n\n';
+    let mensagem = '���️ *Novo Pedido - Lanches Naturais*\n\n';
     carrinho.forEach(item => {
         mensagem += `• ${item.nome}\nR$ ${item.preco.toFixed(2)}\n\n`;
     });
     
     const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
-    mensagem += `\n💰 *Total: R$ ${total.toFixed(2)}*\n\nAguardo confirmação! 😊`;
+    mensagem += `\n��� *Total: R$ ${total.toFixed(2)}*`;
+    
+    // Verifica frete grátis
+    if (total >= 30) {
+        mensagem += '\n��� *FRETE GRÁTIS!*';
+    }
+    
+    // Adiciona observações se houver
+    const observacoes = document.getElementById('observacoes').value.trim();
+    if (observacoes) {
+        mensagem += `\n\n��� *Observações:*\n${observacoes}`;
+    }
+    
+    mensagem += '\n\nAguardo confirmação! ���';
     
     const numeroWhatsApp = '5511998468166';
     const url = `https://wa.me/${numeroWhatsApp}?text=${encodeURIComponent(mensagem)}`;
     window.open(url, '_blank');
     
     carrinho = [];
+    document.getElementById('observacoes').value = '';
     atualizarCarrinho();
     toggleCarrinho();
 }

@@ -86,6 +86,24 @@ header h1 {
     position: relative;
 }
 
+.badge-frete {
+    display: inline-block;
+    background: linear-gradient(135deg, #f59e0b, #f97316);
+    color: var(--white);
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 1rem;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-md);
+    animation: pulse-badge 2s ease-in-out infinite;
+}
+
+@keyframes pulse-badge {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+}
+
 .hero h2 {
     font-size: 2.5rem;
     font-weight: 700;
@@ -296,6 +314,16 @@ header h1 {
     transform: scale(0.98);
 }
 
+.btn-add.added {
+    animation: addToCart 0.6s ease;
+}
+
+@keyframes addToCart {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); background: #10b981; }
+    100% { transform: scale(1); }
+}
+
 /* Carrinho flutuante moderno */
 .carrinho-flutuante {
     position: fixed;
@@ -492,6 +520,36 @@ header h1 {
 
 .carrinho-acoes button {
     flex: 1;
+}
+
+.observacoes-pedido {
+    margin-top: 24px;
+    padding-top: 24px;
+    border-top: 2px solid var(--light-bg);
+}
+
+.observacoes-pedido label {
+    display: block;
+    font-weight: 600;
+    color: var(--dark);
+    margin-bottom: 12px;
+    font-size: 1rem;
+}
+
+.observacoes-pedido textarea {
+    width: 100%;
+    padding: 12px;
+    border: 2px solid var(--light-bg);
+    border-radius: 8px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    resize: vertical;
+    transition: border-color 0.3s ease;
+}
+
+.observacoes-pedido textarea:focus {
+    outline: none;
+    border-color: var(--primary);
 }
 
 /* Seção Sobre */
