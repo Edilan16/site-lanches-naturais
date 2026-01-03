@@ -314,9 +314,15 @@
         <div class="container">
             <div class="header">
                 <h1>🍃 Painel Administrativo - Lanches Naturais</h1>
-                <button class="btn btn-secondary" onclick="sair()">Sair</button>
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn btn-primary" onclick="mostrarAba('produtos')">Produtos</button>
+                    <button class="btn btn-primary" onclick="mostrarAba('configuracoes')">Configurações</button>
+                    <button class="btn btn-secondary" onclick="sair()">Sair</button>
+                </div>
             </div>
 
+            <!-- Aba de Produtos -->
+            <div id="aba-produtos">
             <!-- Formulário de Adicionar Produto -->
             <div class="add-product-section">
                 <h2>➕ Adicionar Novo Produto</h2>
@@ -349,6 +355,81 @@
                 <h2 style="color: #1f2937; margin-bottom: 20px;">📋 Produtos Cadastrados</h2>
                 <div id="produtos-lista" class="products-grid"></div>
             </div>
+            </div>
+
+            <!-- Aba de Configurações -->
+            <div id="aba-configuracoes" style="display: none;">
+                <!-- Status da Loja -->
+                <div class="add-product-section">
+                    <h2>🏪 Status da Loja</h2>
+                    <div class="form-group">
+                        <label style="display: flex; align-items: center; gap: 10px; cursor: pointer;">
+                            <input type="checkbox" id="loja-aberta" onchange="toggleLojaAberta()" style="width: 24px; height: 24px; cursor: pointer;">
+                            <span style="font-size: 18px; font-weight: 700;">Loja Aberta (Aceitar Pedidos)</span>
+                        </label>
+                        <p style="color: #6b7280; margin-top: 10px;">Desmarque para fechar temporariamente a loja</p>
+                    </div>
+                    <div id="status-atual" style="margin-top: 20px; padding: 15px; border-radius: 8px; font-weight: 600;"></div>
+                </div>
+
+                <!-- Horários de Funcionamento -->
+                <div class="add-product-section">
+                    <h2>🕐 Horários de Funcionamento</h2>
+                    <form id="form-horario" onsubmit="salvarHorarios(event)">
+                        <div class="form-group">
+                            <label>Segunda a Sexta:</label>
+                            <input type="text" id="horario-seg-sex" placeholder="08:00-18:00" value="08:00-18:00">
+                        </div>
+                        <div class="form-group">
+                            <label>Sábado:</label>
+                            <input type="text" id="horario-sab" placeholder="08:00-14:00" value="08:00-14:00">
+                        </div>
+                        <div class="form-group">
+                            <label>Domingo:</label>
+                            <select id="horario-dom">
+                                <option value="fechado">Fechado</option>
+                                <option value="08:00-12:00">08:00-12:00</option>
+                                <option value="08:00-14:00">08:00-14:00</option>
+                                <option value="08:00-18:00">08:00-18:00</option>
+                            </select>
+                        </div>
+                        <button type="submit" class="btn btn-success">Salvar Horários</button>
+                    </form>
+                </div>
+
+                <!-- Cupons de Desconto -->
+                <div class="add-product-section">
+                    <h2>🎟️ Cupons de Desconto</h2>
+                    <form id="form-cupom" onsubmit="adicionarCupom(event)">
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Código do Cupom:</label>
+                                <input type="text" id="cupom-codigo" placeholder="Ex: PROMO10" style="text-transform: uppercase;" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Tipo de Desconto:</label>
+                                <select id="cupom-tipo" required>
+                                    <option value="percentual">Percentual (%)</option>
+                                    <option value="fixo">Valor Fixo (R$)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label>Valor:</label>
+                                <input type="number" id="cupom-valor" step="0.01" placeholder="Ex: 10" required>
+                            </div>
+                            <div class="form-group">
+                                <label>Descrição:</label>
+                                <input type="text" id="cupom-descricao" placeholder="Ex: Desconto de Boas-vindas" required>
+                            </div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Adicionar Cupom</button>
+                    </form>
+                    <div id="cupons-lista" style="margin-top: 30px;"></div>
+                </div>
+            </div>
+
         </div>
     </div>
 

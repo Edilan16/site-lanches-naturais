@@ -230,7 +230,147 @@ window.onclick = function(event) {
     }
 }
 
+// Controle de Abas
+function mostrarAba(aba) {
+    document.getElementById('aba-produtos').style.display = aba === 'produtos' ? 'block' : 'none';
+    document.getElementById('aba-configuracoes').style.display = aba === 'configuracoes' ? 'block' : 'none';
+    
+    if (aba === 'configuracoes') {
+        carregarConfiguracoes();
+    }
+}
+
+// Toggle Status da Loja
+function toggleLojaAberta() {
+    const checkbox = document.getElementById('loja-aberta');
+    const status = document.getElementById('status-atual');
+    
+    localStorage.setItem('loja_aberta', checkbox.checked);
+    
+    if (checkbox.checked) {
+        status.style.background = '#d1fae5';
+        status.style.color = '#065f46';
+        status.textContent = '✅ Loja ABERTA - Aceitando pedidos';
+    } else {
+        status.style.background = '#fee2e2';
+        status.style.color = '#991b1b';
+        status.textContent = '⛔ Loja FECHADA - Não aceitando pedidos';
+    }
+}
+
+// Salvar Horários
+function salvarHorarios(event) {
+    event.preventDefault();
+    
+    const config = {
+        seg_sex: document.getElementById('horario-seg-sex').value,
+        sab: document.getElementById('horario-sab').value,
+        dom: document.getElementById('horario-dom').value
+    };
+    
+    localStorage.setItem('config_horario', JSON.stringify(config));
+    alert('✅ Horários salvos com sucesso!');
+}
+
+// Adicionar Cupom
+function adicionarCupom(event) {
+    event.preventDefault();
+    
+    const codigo = document.getElementById('cupom-codigo').value.toUpperCase();
+    const tipo = document.getElementById('cupom-tipo').value;
+    const valor = parseFloat(document.getElementById('cupom-valor').value);
+    const descricao = document.getElementById('cupom-descricao').value;
+    
+    const cupons = JSON.parse(localStorage.getItem('cupons') || '{}');
+    
+    cupons[codigo] = {
+        tipo: tipo,
+        valor: valor,
+        descricao: descricao,
+        ativo: true
+    };
+    
+    localStorage.setItem('cupons', JSON.stringify(cupons));
+    document.getElementById('form-cupom').reset();
+    carregarCupons();
+    alert(`✅ Cupom ${codigo} criado com sucesso!`);
+}
+
+// Remover Cupom
+function removerCupom(codigo) {
+    if (confirm(`Deseja remover o cupom ${codigo}?`)) {
+        const cupons = JSON.parse(localStorage.getItem('cupons') || '{}');
+        delete cupons[codigo];
+        localStorage.setItem('cupons', JSON.stringify(cupons));
+        carregarCupons();
+    }
+}
+
+// Toggle Cupom Ativo
+function toggleCupomAtivo(codigo) {
+    const cupons = JSON.parse(localStorage.getItem('cupons') || '{}');
+    if (cupons[codigo]) {
+        cupons[codigo].ativo = !cupons[codigo].ativo;
+        localStorage.setItem('cupons', JSON.stringify(cupons));
+        carregarCupons();
+    }
+}
+
+// Carregar Cupons
+function carregarCupons() {
+    const cupons = JSON.parse(localStorage.getItem('cupons') || '{}');
+    const container = document.getElementById('cupons-lista');
+    
+    if (Object.keys(cupons).length === 0) {
+        container.innerHTML = '<p style="text-align: center; color: #6b7280;">Nenhum cupom cadastrado</p>';
+        return;
+    }
+    
+    container.innerHTML = Object.keys(cupons).map(codigo => {
+        const cupom = cupons[codigo];
+        return `
+            <div class="product-card" style="margin-bottom: 15px;">
+                <div class="product-header">
+                    <h3>${codigo}</h3>
+                    <span class="status-badge ${cupom.ativo ? 'disponivel' : 'indisponivel'}">
+                        ${cupom.ativo ? '✓ Ativo' : '✕ Inativo'}
+                    </span>
+                </div>
+                <p style="color: #6b7280; margin: 10px 0;">${cupom.descricao}</p>
+                <p style="font-weight: 700; color: #667eea; margin-bottom: 15px;">
+                    ${cupom.tipo === 'percentual' ? cupom.valor + '%' : 'R$ ' + cupom.valor.toFixed(2)} de desconto
+                </p>
+                <div class="product-actions">
+                    <button class="btn ${cupom.ativo ? 'btn-secondary' : 'btn-success'}" 
+                            onclick="toggleCupomAtivo('${codigo}')" style="font-size: 12px;">
+                        ${cupom.ativo ? 'Desativar' : 'Ativar'}
+                    </button>
+                    <button class="btn btn-danger" onclick="removerCupom('${codigo}')">Remover</button>
+                </div>
+            </div>
+        `;
+    }).join('');
+}
+
+// Carregar Configurações
+function carregarConfiguracoes() {
+    // Status da Loja
+    const lojaAberta = localStorage.getItem('loja_aberta') !== 'false';
+    document.getElementById('loja-aberta').checked = lojaAberta;
+    toggleLojaAberta();
+    
+    // Horários
+    const config = JSON.parse(localStorage.getItem('config_horario') || '{"seg_sex":"08:00-18:00","sab":"08:00-14:00","dom":"fechado"}');
+    document.getElementById('horario-seg-sex').value = config.seg_sex;
+    document.getElementById('horario-sab').value = config.sab;
+    document.getElementById('horario-dom').value = config.dom;
+    
+    // Cupons
+    carregarCupons();
+}
+
 // Inicializar produtos padrão se não existirem
 if (!localStorage.getItem('produtos')) {
     localStorage.setItem('produtos', JSON.stringify(carregarProdutosAdmin()));
 }
+

@@ -232,6 +232,17 @@ function finalizarPedido() {
 
 // Sistema de Horário de Funcionamento
 function verificarHorario() {
+    const badge = document.getElementById('status-horario');
+    if (!badge) return true;
+    
+    // Verificar se a loja foi fechada manualmente
+    const lojaAberta = localStorage.getItem('loja_aberta') !== 'false';
+    if (!lojaAberta) {
+        badge.className = 'status-badge fechado';
+        badge.textContent = '🔴 FECHADO - Loja temporariamente fechada';
+        return false;
+    }
+    
     const config = JSON.parse(localStorage.getItem('config_horario') || '{"seg_sex": "08:00-18:00", "sab": "08:00-14:00", "dom": "fechado"}');
     const agora = new Date();
     const diaSemana = agora.getDay(); // 0=dom, 1=seg, ..., 6=sab
@@ -245,9 +256,6 @@ function verificarHorario() {
     } else { // Segunda a Sexta
         horario = config.seg_sex;
     }
-    
-    const badge = document.getElementById('status-horario');
-    if (!badge) return true;
     
     if (horario === 'fechado') {
         badge.className = 'status-badge fechado';
