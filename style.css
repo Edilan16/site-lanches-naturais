@@ -258,22 +258,22 @@ header h1 {
 }
 
 .produto-info {
-    padding: 24px;
+    padding: 28px 32px;
 }
 
 .produto-nome {
     font-size: 1.5rem;
     font-weight: 700;
     color: var(--dark);
-    margin-bottom: 12px;
-    line-height: 1.3;
+    margin-bottom: 16px;
+    line-height: 1.4;
 }
 
 .produto-descricao {
     color: var(--gray);
-    margin-bottom: 20px;
+    margin-bottom: 24px;
     font-size: 0.95rem;
-    line-height: 1.6;
+    line-height: 1.7;
 }
 
 .produto-footer {
