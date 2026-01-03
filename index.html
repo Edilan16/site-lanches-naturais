@@ -24,6 +24,7 @@
         <div class="container">
             <h1>🥗 Lanches Naturais</h1>
             <p class="tagline">Sabor e saúde na medida certa</p>
+            <div id="status-horario" class="status-badge"></div>
         </div>
     </header>
 
@@ -63,7 +64,21 @@
             </div>
             <div class="carrinho-total">
                 <h3>Total: R$ <span id="total-carrinho">0,00</span></h3>
+                <div id="desconto-aplicado" class="desconto-aplicado" style="display:none;">
+                    <p>💰 Desconto: -R$ <span id="valor-desconto">0,00</span></p>
+                    <p><strong>Total com desconto: R$ <span id="total-com-desconto">0,00</span></strong></p>
+                </div>
             </div>
+            
+            <div class="cupom-desconto">
+                <label for="cupom">🎟️ Cupom de desconto:</label>
+                <div class="cupom-input-group">
+                    <input type="text" id="cupom" placeholder="Digite o código">
+                    <button class="btn-cupom" onclick="aplicarCupom()">Aplicar</button>
+                </div>
+                <div id="cupom-mensagem" class="cupom-mensagem"></div>
+            </div>
+            
             <div class="observacoes-pedido">
                 <label for="obs">📝 Observações (opcional):</label>
                 <textarea id="observacoes" placeholder="Ex: Sem cebola, entregar na portaria, etc." rows="3"></textarea>
@@ -95,6 +110,16 @@
                     <h3>Entrega Rápida</h3>
                     <p>Receba fresquinho no conforto da sua casa</p>
                 </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Depoimentos -->
+    <section class="depoimentos">
+        <div class="container">
+            <h2>O que nossos clientes dizem ⭐</h2>
+            <div id="depoimentos-grid" class="depoimentos-grid">
+                <!-- Depoimentos carregados via JavaScript -->
             </div>
         </div>
     </section>

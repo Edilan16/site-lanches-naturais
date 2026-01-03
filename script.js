@@ -128,32 +128,52 @@ function adicionarAoCarrinho(id, button) {
 }
 
 function atualizarCarrinho() {
-    const lista = document.getElementById('carrinho-lista');
+    const lista = document.getElementById('itens-carrinho');
     const contador = document.getElementById('carrinho-count');
-    const totalElement = document.getElementById('carrinho-total');
+    const totalElement = document.getElementById('total-carrinho');
+    const descontoDiv = document.getElementById('desconto-aplicado');
+    const valorDescontoElement = document.getElementById('valor-desconto');
+    const totalComDescontoElement = document.getElementById('total-com-desconto');
     
     contador.textContent = carrinho.length;
-    lista.innerHTML = '';
     
     if (carrinho.length === 0) {
-        lista.innerHTML = '<p style="text-align: center; color: #666;">Seu carrinho está vazio</p>';
+        lista.innerHTML = '<p class="carrinho-vazio">Seu carrinho está vazio</p>';
         totalElement.textContent = '0.00';
+        if (descontoDiv) descontoDiv.style.display = 'none';
         return;
     }
     
-    carrinho.forEach((item, index) => {
-        const itemDiv = document.createElement('div');
-        itemDiv.className = 'carrinho-item';
-        itemDiv.innerHTML = `
-            <span>${item.nome}</span>
-            <span>R$ ${item.preco.toFixed(2)}</span>
+    lista.innerHTML = carrinho.map((item, index) => `
+        <div class="item-carrinho">
+            <div class="item-info">
+                <h4>${item.nome}</h4>
+                <span>R$ ${item.preco.toFixed(2)}</span>
+            </div>
             <button onclick="removerDoCarrinho(${index})" class="btn-remover">✕</button>
-        `;
-        lista.appendChild(itemDiv);
-    });
+        </div>
+    `).join('');
     
     const total = carrinho.reduce((sum, item) => sum + item.preco, 0);
     totalElement.textContent = total.toFixed(2);
+    
+    // Calcular desconto
+    if (cupomAtual && descontoDiv) {
+        let desconto = 0;
+        if (cupomAtual.tipo === 'percentual') {
+            desconto = total * (cupomAtual.valor / 100);
+        } else {
+            desconto = cupomAtual.valor;
+        }
+        
+        const totalFinal = Math.max(0, total - desconto);
+        
+        valorDescontoElement.textContent = desconto.toFixed(2);
+        totalComDescontoElement.textContent = totalFinal.toFixed(2);
+        descontoDiv.style.display = 'block';
+    } else if (descontoDiv) {
+        descontoDiv.style.display = 'none';
+    }
 }
 
 function removerDoCarrinho(index) {
@@ -210,6 +230,121 @@ function finalizarPedido() {
     toggleCarrinho();
 }
 
+// Sistema de Horário de Funcionamento
+function verificarHorario() {
+    const config = JSON.parse(localStorage.getItem('config_horario') || '{"seg_sex": "08:00-18:00", "sab": "08:00-14:00", "dom": "fechado"}');
+    const agora = new Date();
+    const diaSemana = agora.getDay(); // 0=dom, 1=seg, ..., 6=sab
+    const horaAtual = agora.getHours() * 60 + agora.getMinutes(); // em minutos
+    
+    let horario;
+    if (diaSemana === 0) { // Domingo
+        horario = config.dom;
+    } else if (diaSemana === 6) { // Sábado
+        horario = config.sab;
+    } else { // Segunda a Sexta
+        horario = config.seg_sex;
+    }
+    
+    const badge = document.getElementById('status-horario');
+    if (!badge) return true;
+    
+    if (horario === 'fechado') {
+        badge.className = 'status-badge fechado';
+        badge.textContent = '🔴 FECHADO';
+        return false;
+    }
+    
+    const [inicio, fim] = horario.split('-');
+    const [horaIni, minIni] = inicio.split(':').map(Number);
+    const [horaFim, minFim] = fim.split(':').map(Number);
+    const minutosInicio = horaIni * 60 + minIni;
+    const minutosFim = horaFim * 60 + minFim;
+    
+    const aberto = horaAtual >= minutosInicio && horaAtual < minutosFim;
+    
+    badge.className = `status-badge ${aberto ? 'aberto' : 'fechado'}`;
+    badge.textContent = aberto ? '🟢 ABERTO AGORA' : `🔴 FECHADO - Abre às ${inicio}h`;
+    
+    return aberto;
+}
+
+// Sistema de Cupons
+let cupomAtual = null;
+
+function aplicarCupom() {
+    const codigo = document.getElementById('cupom').value.trim().toUpperCase();
+    const mensagem = document.getElementById('cupom-mensagem');
+    
+    if (!codigo) {
+        mensagem.className = 'cupom-mensagem erro';
+        mensagem.textContent = '❌ Digite um código de cupom';
+        return;
+    }
+    
+    const cupons = JSON.parse(localStorage.getItem('cupons') || '{}');
+    const cupom = cupons[codigo];
+    
+    if (!cupom || !cupom.ativo) {
+        mensagem.className = 'cupom-mensagem erro';
+        mensagem.textContent = '❌ Cupom inválido ou expirado';
+        cupomAtual = null;
+        atualizarCarrinho();
+        return;
+    }
+    
+    cupomAtual = cupom;
+    mensagem.className = 'cupom-mensagem sucesso';
+    mensagem.textContent = `✅ Cupom "${codigo}" aplicado! ${cupom.tipo === 'percentual' ? cupom.valor + '%' : 'R$ ' + cupom.valor.toFixed(2)} de desconto`;
+    
+    atualizarCarrinho();
+}
+
+// Carregar Depoimentos
+function carregarDepoimentos() {
+    const depoimentos = JSON.parse(localStorage.getItem('depoimentos') || '[]');
+    const container = document.getElementById('depoimentos-grid');
+    
+    if (!container) return;
+    
+    if (depoimentos.length === 0) {
+        // Depoimentos padrão
+        const depoimentosPadrao = [
+            { nome: 'Maria Silva', avatar: 'M', estrelas: 5, texto: 'Simplesmente perfeito! Os lanches são fresquinhos e super saborosos. Virrei cliente fiel! 💚', data: 'Há 2 dias' },
+            { nome: 'João Pedro', avatar: 'J', estrelas: 5, texto: 'Melhor sanduíche natural que já comi! Ingredientes de qualidade e entrega rápida. Recomendo!', data: 'Há 1 semana' },
+            { nome: 'Ana Costa', avatar: 'A', estrelas: 5, texto: 'Ótima opção para quem busca alimentação saudável sem perder o sabor. Adorei!', data: 'Há 3 dias' }
+        ];
+        
+        container.innerHTML = depoimentosPadrao.map(dep => `
+            <div class="depoimento-card">
+                <div class="depoimento-estrelas">${'⭐'.repeat(dep.estrelas)}</div>
+                <p class="depoimento-texto">${dep.texto}</p>
+                <div class="depoimento-autor">
+                    <div class="depoimento-avatar">${dep.avatar}</div>
+                    <div class="depoimento-info">
+                        <h4>${dep.nome}</h4>
+                        <p>${dep.data}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    } else {
+        container.innerHTML = depoimentos.filter(d => d.aprovado).map(dep => `
+            <div class="depoimento-card">
+                <div class="depoimento-estrelas">${'⭐'.repeat(dep.estrelas)}</div>
+                <p class="depoimento-texto">${dep.texto}</p>
+                <div class="depoimento-autor">
+                    <div class="depoimento-avatar">${dep.nome.charAt(0).toUpperCase()}</div>
+                    <div class="depoimento-info">
+                        <h4>${dep.nome}</h4>
+                        <p>${dep.data}</p>
+                    </div>
+                </div>
+            </div>
+        `).join('');
+    }
+}
+
 window.onclick = function(event) {
     const modal = document.getElementById('modal-carrinho');
     if (event.target === modal) toggleCarrinho();
@@ -221,6 +356,21 @@ document.addEventListener('DOMContentLoaded', function() {
         localStorage.setItem('produtos', JSON.stringify(getProdutos()));
     }
     
+    // Inicializar cupons padrão
+    if (!localStorage.getItem('cupons')) {
+        const cuponsPadrao = {
+            'PRIMEIRA10': { tipo: 'percentual', valor: 10, ativo: true, descricao: 'Primeira compra - 10% OFF' },
+            'BEMVINDO': { tipo: 'fixo', valor: 5, ativo: true, descricao: 'Bem-vindo! R$ 5,00 OFF' }
+        };
+        localStorage.setItem('cupons', JSON.stringify(cuponsPadrao));
+    }
+    
     carregarProdutos();
     atualizarCarrinho();
+    verificarHorario();
+    carregarDepoimentos();
+    
+    // Atualizar horário a cada minuto
+    setInterval(verificarHorario, 60000);
 });
+

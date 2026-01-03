@@ -643,6 +643,210 @@ header h1 {
     position: relative;
 }
 
+/* Status de Horário */
+.status-badge {
+    display: inline-block;
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    margin-top: 12px;
+    animation: fadeIn 0.5s ease;
+}
+
+.status-badge.aberto {
+    background: #d1fae5;
+    color: #065f46;
+    border: 2px solid #10b981;
+}
+
+.status-badge.fechado {
+    background: #fee2e2;
+    color: #991b1b;
+    border: 2px solid #ef4444;
+}
+
+/* Cupom de Desconto */
+.cupom-desconto {
+    margin: 20px 0;
+    padding: 20px;
+    background: #f0f9ff;
+    border-radius: 12px;
+    border: 2px dashed #3b82f6;
+}
+
+.cupom-desconto label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: var(--dark);
+}
+
+.cupom-input-group {
+    display: flex;
+    gap: 10px;
+}
+
+.cupom-input-group input {
+    flex: 1;
+    padding: 12px;
+    border: 2px solid #e5e7eb;
+    border-radius: 8px;
+    font-size: 14px;
+    text-transform: uppercase;
+}
+
+.cupom-input-group input:focus {
+    outline: none;
+    border-color: #3b82f6;
+}
+
+.btn-cupom {
+    padding: 12px 24px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.btn-cupom:hover {
+    background: #2563eb;
+    transform: translateY(-2px);
+}
+
+.cupom-mensagem {
+    margin-top: 10px;
+    padding: 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    display: none;
+}
+
+.cupom-mensagem.sucesso {
+    background: #d1fae5;
+    color: #065f46;
+    display: block;
+}
+
+.cupom-mensagem.erro {
+    background: #fee2e2;
+    color: #991b1b;
+    display: block;
+}
+
+.desconto-aplicado {
+    margin-top: 15px;
+    padding: 15px;
+    background: #d1fae5;
+    border-radius: 8px;
+    border-left: 4px solid #10b981;
+}
+
+.desconto-aplicado p {
+    margin: 5px 0;
+    color: #065f46;
+    font-size: 14px;
+}
+
+.desconto-aplicado strong {
+    font-size: 16px;
+}
+
+/* Depoimentos */
+.depoimentos {
+    background: var(--light-bg);
+    padding: 80px 24px;
+}
+
+.depoimentos h2 {
+    text-align: center;
+    font-size: 2.5rem;
+    margin-bottom: 50px;
+    color: var(--dark);
+}
+
+.depoimentos-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.depoimento-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    box-shadow: var(--shadow-md);
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.depoimento-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-lg);
+}
+
+.depoimento-card::before {
+    content: '"';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 4rem;
+    color: var(--primary);
+    opacity: 0.2;
+    font-family: Georgia, serif;
+}
+
+.depoimento-estrelas {
+    color: #f59e0b;
+    font-size: 1.2rem;
+    margin-bottom: 15px;
+}
+
+.depoimento-texto {
+    font-size: 1rem;
+    color: var(--gray);
+    line-height: 1.6;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+.depoimento-autor {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.depoimento-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-weight: 700;
+    font-size: 1.2rem;
+}
+
+.depoimento-info h4 {
+    color: var(--dark);
+    margin: 0;
+    font-size: 1rem;
+}
+
+.depoimento-info p {
+    color: var(--gray);
+    margin: 0;
+    font-size: 0.85rem;
+}
+
 /* Footer */
 footer {
     background: var(--dark);
